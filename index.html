@@ -22,6 +22,8 @@
             background-color: #050505;
             overflow-x: hidden;
             color: #fff;
+            position: relative;
+            min-height: 100vh;
         }
 
         #vanta-canvas {
@@ -41,7 +43,7 @@
             flex-direction: column;
             align-items: center;
             z-index: 1;
-            padding: 80px 20px 40px 20px;
+            padding: 80px 20px 100px 20px; /* নিচের দিকে জায়গা বাড়ানো হয়েছে AI ডিসক্লেমারের জন্য */
         }
 
         /* Title Styling */
@@ -69,7 +71,7 @@
             margin-left: 5px;
         }
 
-        /* --- Reverted Original Card Design --- */
+        /* --- Original Card Design --- */
         .card-wrapper {
             display: flex;
             justify-content: center;
@@ -186,7 +188,7 @@
         @media (max-width: 768px) { .form-row { flex-direction: column; } .form-row input, .submit-btn { width: 100%; } }
 
         /* --- Synced Footer --- */
-        .footer-container { text-align: center; margin-top: 20px; padding-bottom: 50px; }
+        .footer-container { text-align: center; margin-top: 20px; }
         .footer-top {
             font-family: 'Dancing Script', cursive;
             font-size: 2.5rem;
@@ -201,6 +203,18 @@
             letter-spacing: 3px;
             text-transform: uppercase;
             transition: color 0.1s linear;
+        }
+
+        /* AI Disclaimer Styling */
+        .ai-disclaimer {
+            position: absolute;
+            bottom: 15px;
+            right: 20px;
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 300;
+            letter-spacing: 0.5px;
+            z-index: 10;
         }
 
         #success-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; z-index: 2000; justify-content: center; align-items: center; }
@@ -246,7 +260,7 @@
         </div>
 
         <section id="feedback-section">
-            <p class="feedback-title">Share Your Thoughts,Ideas,Advice</p>
+            <p class="feedback-title">Share Your Thoughts</p>
             <form id="feedback-form">
                 <input type="hidden" name="access_key" value="40cc5fb6-5cec-4102-ba71-7f261e4302e2">
                 <div class="form-row">
@@ -261,6 +275,8 @@
             <p class="footer-top">Think, Build, Inspire.</p>
             <p class="footer-bottom">DESIGNED FOR RUETians | 2026</p>
         </div>
+
+        <div class="ai-disclaimer">This website is developed with the help of AI</div>
     </div>
 
     <div id="success-modal">
