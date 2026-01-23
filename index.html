@@ -5,225 +5,90 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UniDOCS Generator | RUET</title>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         :root {
-            --sync-color: #ff0055; /* জাভাস্ক্রিপ্ট দিয়ে ডাইনামিকভাবে আপডেট হবে */
+            --sync-color: #ff0055;
+            --bg-color: #050505;
+            --text-color: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border-color: rgba(255, 255, 255, 0.1);
         }
 
-        /* --- Global Styles --- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+        [data-theme="light"] {
+            --bg-color: #f8f9fa;
+            --text-color: #1a1a1a;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --border-color: rgba(0, 0, 0, 0.08);
         }
 
-        body {
-            background-color: #050505;
-            overflow-x: hidden;
-            color: #fff;
-            position: relative;
-            min-height: 100vh;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: background-color 0.4s ease, color 0.4s ease; }
+
+        body { background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; min-height: 100vh; }
+        #vanta-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+        .theme-switch {
+            position: fixed; top: 20px; right: 20px; z-index: 1000; 
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            padding: 12px; border-radius: 50%; cursor: pointer; backdrop-filter: blur(10px);
+            color: var(--text-color); box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
-        #vanta-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
+        .container { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; padding: 80px 20px 100px 20px; }
 
-        /* --- Main Content Section --- */
-        .container {
-            position: relative;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            z-index: 1;
-            padding: 80px 20px 100px 20px; /* নিচের দিকে জায়গা বাড়ানো হয়েছে AI ডিসক্লেমারের জন্য */
-        }
+        .title { font-size: clamp(2.2rem, 8vw, 4.5rem); margin-bottom: 60px; text-align: center; font-weight: 700; letter-spacing: 2px; }
+        .holo-text { color: var(--sync-color); text-shadow: 0 0 15px var(--sync-color); }
 
-        /* Title Styling */
-        .title {
-            font-size: clamp(2rem, 10vw, 4.5rem);
-            margin-bottom: 60px;
-            text-align: center;
-            text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 3px;
-            line-height: 1.2;
-        }
+        .card-wrapper { display: flex; justify-content: center; flex-wrap: wrap; gap: 35px; width: 100%; margin-bottom: 80px; }
 
-        .holo-text {
-            color: var(--sync-color);
-            transition: color 0.1s linear;
-            display: inline-block;
-            text-shadow: 0px 0px 15px var(--sync-color);
-        }
-
-        .white-text {
-            color: #ffffff;
-            font-weight: 400;
-            display: inline-block;
-            margin-left: 5px;
-        }
-
-        /* --- Original Card Design --- */
-        .card-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 30px;
-            width: 100%;
-            margin-bottom: 80px;
-        }
+        @keyframes floating { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-15px); } }
 
         .card {
-            position: relative;
-            width: 100%;
-            max-width: 320px;
-            height: 400px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: 0.3s ease;
+            position: relative; width: 100%; max-width: 310px; height: 380px;
+            background: var(--card-bg); border-radius: 25px; border: 1px solid var(--border-color);
+            backdrop-filter: blur(15px); display: flex; justify-content: center; align-items: center;
+            cursor: pointer; animation: floating 5s ease-in-out infinite; will-change: transform;
         }
+        .card:hover { transform: translateY(-15px) scale(1.03) !important; box-shadow: 0 20px 40px rgba(0,0,0,0.1), 0 0 25px var(--sync-color); border-color: var(--sync-color); animation-play-state: paused; }
+        .card:active { transform: scale(0.95) !important; }
 
-        .card:hover {
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateY(-10px);
-        }
+        .card .content { padding: 25px; text-align: center; }
+        .card h3 { font-size: 1.4rem; margin-bottom: 10px; font-weight: 600; }
+        .card p { opacity: 0.7; font-size: 0.85rem; line-height: 1.4; margin-bottom: 20px; }
 
-        .card .content {
-            padding: 30px;
-            text-align: center;
-        }
+        .btn { padding: 10px 22px; background: transparent; border: 1.5px solid var(--sync-color); border-radius: 30px; font-weight: 700; font-size: 0.75rem; color: var(--text-color); transition: 0.3s; }
+        .card:hover .btn { background: var(--sync-color); color: #fff; }
 
-        /* Original Big Numbers */
-        .card .content h2 {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            font-size: 3.5rem;
-            color: rgba(255, 255, 255, 0.05);
-            font-weight: 800;
-            transition: color 0.3s;
-        }
-        
-        .card:hover .content h2 {
-            color: var(--sync-color);
-            opacity: 0.1;
-        }
+        #feedback-section { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 30px; padding: 35px; width: 90%; max-width: 900px; margin-bottom: 60px; backdrop-filter: blur(10px); }
+        .feedback-title { font-family: 'Dancing Script', cursive; font-size: 2.2rem; text-align: center; color: var(--sync-color); margin-bottom: 20px; }
+        .form-row { display: flex; gap: 15px; }
+        .form-row input { flex: 1; padding: 14px; border-radius: 12px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.03); color: var(--text-color); outline: none; }
+        .submit-btn { padding: 14px 28px; background: var(--sync-color); color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
 
-        .card .content h3 { color: #fff; font-size: 1.5rem; margin-bottom: 12px; font-weight: 600; }
-        .card .content p { color: rgba(255, 255, 255, 0.7); font-size: 0.9rem; line-height: 1.5; margin-bottom: 25px; }
+        .footer-top { font-family: 'Dancing Script', cursive; font-size: 2rem; color: var(--sync-color); text-align: center; }
+        .footer-bottom { font-size: 0.75rem; text-align: center; opacity: 0.5; letter-spacing: 2px; margin-top: 5px; }
 
-        /* Glassy Button (Syncs color only on hover) */
-        .btn {
-            padding: 10px 25px;
-            background: rgba(255, 255, 255, 0.05);
-            color: rgba(255, 255, 255, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 30px;
-            font-weight: 700;
-            font-size: 0.8rem;
-            backdrop-filter: blur(5px);
-            transition: all 0.3s ease;
-        }
-
-        .card:hover .btn {
-            background: var(--sync-color);
-            border-color: var(--sync-color);
-            color: #fff;
-            box-shadow: 0 0 15px var(--sync-color);
-            transform: scale(1.05);
-        }
-
-        /* --- Feedback Section --- */
-        #feedback-section {
-            background: rgba(255, 255, 255, 0.05); 
-            backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 35px;
-            padding: 40px;
-            width: 90%;
-            max-width: 1000px;
-            margin-bottom: 60px;
-        }
-
-        .feedback-title {
-            font-family: 'Dancing Script', cursive;
-            font-size: 2.5rem;
-            margin-bottom: 30px;
-            text-align: center;
-            color: var(--sync-color);
-            transition: color 0.1s linear;
-        }
-
-        .form-row { display: flex; gap: 20px; align-items: center; }
-        .form-row input {
-            flex: 1; padding: 16px 25px; border-radius: 20px;
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            color: #fff; outline: none;
-        }
-
-        .submit-btn {
-            padding: 16px 45px; 
-            background: var(--sync-color); 
-            border-radius: 20px; border: none; 
-            color: #fff; font-weight: 700; cursor: pointer; 
-            transition: 0.3s;
-        }
-
-        @media (max-width: 768px) { .form-row { flex-direction: column; } .form-row input, .submit-btn { width: 100%; } }
-
-        /* --- Synced Footer --- */
-        .footer-container { text-align: center; margin-top: 20px; }
-        .footer-top {
-            font-family: 'Dancing Script', cursive;
-            font-size: 2.5rem;
-            color: var(--sync-color);
-            margin-bottom: 5px;
-            transition: color 0.1s linear;
-        }
-        .footer-bottom {
-            font-size: 1rem;
-            color: var(--sync-color);
-            opacity: 0.8;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            transition: color 0.1s linear;
-        }
-
-        /* AI Disclaimer Styling */
-        .ai-disclaimer {
+        @media (max-width: 768px) { .form-row { flex-direction: column; } .title { font-size: 2.5rem; } }
+      .ai-disclaimer {
             position: absolute;
             bottom: 15px;
             right: 20px;
             font-size: 0.65rem;
-            color: rgba(255, 255, 255, 0.3);
+            color: rgb(255, 127, 127);
             font-weight: 300;
             letter-spacing: 0.5px;
             z-index: 10;
         }
-
-        #success-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; z-index: 2000; justify-content: center; align-items: center; }
-        .success-content { background: rgba(255,255,255,0.1); padding: 40px; border-radius: 30px; border: 1px solid var(--sync-color); text-align: center; }
     </style>
 </head>
-<body>
+<body data-theme="dark">
 
     <div id="vanta-canvas"></div>
+
+    <button class="theme-switch" id="theme-toggle">
+        <i class="fas fa-moon"></i>
+    </button>
 
     <div class="container">
         <h1 class="title">
@@ -233,7 +98,6 @@
         <div class="card-wrapper">
             <div class="card" onclick="openLink('https://ahamedjubayer2003-hash.github.io/course-registration/')">
                 <div class="content">
-                    <h2>01</h2>
                     <h3>Course Registration</h3>
                     <p>Automated tool for RUET course registration forms.</p>
                     <div class="btn">Explore Now</div>
@@ -242,7 +106,6 @@
 
             <div class="card" onclick="openLink('https://ahamedjubayer2003-hash.github.io/exam-registration/')">
                 <div class="content">
-                    <h2>02</h2>
                     <h3>Exam Registration</h3>
                     <p>Generate RUET exam registration documents instantly.</p>
                     <div class="btn">Explore Now</div>
@@ -251,7 +114,6 @@
 
             <div class="card" onclick="openLink('https://ahamedjubayer2003-hash.github.io/cover-page2404/')">
                 <div class="content">
-                    <h2>03</h2>
                     <h3>Cover Page</h3>
                     <p>Cover page generator for Assignment/Lab Report.</p>
                     <div class="btn">Explore Now</div>
@@ -260,82 +122,100 @@
         </div>
 
         <section id="feedback-section">
-            <p class="feedback-title">Share Your Thoughts</p>
+            <p class="feedback-title">Share Your Thoughts,Ideas,Advice</p>
             <form id="feedback-form">
                 <input type="hidden" name="access_key" value="40cc5fb6-5cec-4102-ba71-7f261e4302e2">
                 <div class="form-row">
-                    <input type="email" name="email" placeholder="Your Email Address" required>
-                    <input type="text" name="message" placeholder="Share Your Thoughts, Ideas, or Advice" required>
-                    <button type="submit" id="main-submit-btn" class="submit-btn">Send Message</button>
+                    <input type="email" name="email" placeholder="Email" required>
+                    <input type="text" name="message" placeholder="Your Thoughts,Ideas,Advice" required>
+                    <button type="submit" class="submit-btn" id="send-btn">Send</button>
                 </div>
             </form>
         </section>
 
-        <div class="footer-container">
+        <footer>
             <p class="footer-top">Think, Build, Inspire.</p>
             <p class="footer-bottom">DESIGNED FOR RUETians | 2026</p>
-        </div>
-
-        <div class="ai-disclaimer">This website is developed with the help of AI</div>
+        </footer>
+      <div class="ai-disclaimer">This website is developed with the help of AI</div>
     </div>
-
-    <div id="success-modal">
-        <div class="success-content">
-            <h2 style="color: var(--sync-color); margin-bottom: 10px;">✓ Message Sent!</h2>
-            <p>Thank you for your feedback.</p>
-        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.dots.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
 
     <script>
-        // 1. Sync Logic for Vanta and UI Elements
-        let vantaEffect = VANTA.NET({
-            el: "#vanta-canvas",
-            mouseControls: true, touchControls: true,
-            minHeight: 200.00, minWidth: 200.00, scale: 1.00, scaleMobile: 1.00,
-            color: 0xff3f81, backgroundColor: 0x050505, points: 15.00, maxDistance: 20.00, spacing: 15.00
+        let vantaEffect = null;
+        let hue = 0;
+        const body = document.body;
+        const themeBtn = document.getElementById('theme-toggle');
+
+        // 1. Function to Initialize Vanta based on Theme
+        function initVanta(theme) {
+            if (vantaEffect) vantaEffect.destroy();
+            
+            if (theme === 'light') {
+                // Light Mode: Bigger Points (DOTS Effect)
+                vantaEffect = VANTA.DOTS({
+                    el: "#vanta-canvas",
+                    mouseControls: true, touchControls: true,
+                    minHeight: 200.00, minWidth: 200.00,
+                    scale: 1.00, scaleMobile: 1.00,
+                    color: 0xff3f81,
+                    color2: 0xffffff,
+                    backgroundColor: 0xf8f9fa,
+                    size: 5.50, // পয়েন্টের সাইজ এখানে বড় করা হয়েছে
+                    spacing: 35.00,
+                    showLines: false
+                });
+            } else {
+                // Dark Mode: Classic Cyberpunk (NET Effect)
+                vantaEffect = VANTA.NET({
+                    el: "#vanta-canvas",
+                    mouseControls: true, touchControls: true,
+                    minHeight: 200.00, minWidth: 200.00,
+                    scale: 1.00, scaleMobile: 1.00,
+                    color: 0xff3f81,
+                    backgroundColor: 0x050505,
+                    points: window.innerWidth < 768 ? 8.00 : 15.00,
+                    maxDistance: 20.00,
+                    spacing: 16.00
+                });
+            }
+        }
+
+        // Initialize first time
+        initVanta('dark');
+
+        // 2. Theme Toggle with Effect Switch
+        themeBtn.addEventListener('click', () => {
+            const isLight = body.getAttribute('data-theme') === 'light';
+            const newTheme = isLight ? 'dark' : 'light';
+            
+            body.setAttribute('data-theme', newTheme);
+            themeBtn.querySelector('i').className = isLight ? 'fas fa-moon' : 'fas fa-sun';
+            
+            initVanta(newTheme); // থিম অনুযায়ী পয়েন্ট স্টাইল বদলে যাবে
         });
 
-        let hue = 0;
+        // 3. Dynamic Color Sync
         setInterval(() => {
             hue = (hue + 1) % 360;
             const hslColor = `hsl(${hue}, 85%, 60%)`;
             const hexColor = new THREE.Color(hslColor).getHex();
-            vantaEffect.setOptions({ color: hexColor });
+            if(vantaEffect && vantaEffect.setOptions) {
+                vantaEffect.setOptions({ color: hexColor });
+            }
             document.documentElement.style.setProperty('--sync-color', hslColor);
-        }, 100);
+        }, 150);
 
-        // 2. Tilt for Desktop
-        if (!('ontouchstart' in window)) {
-            VanillaTilt.init(document.querySelectorAll(".card"), { max: 12, speed: 400, glare: true, "max-glare": 0.2 });
+        function openLink(url) { setTimeout(() => { window.open(url, '_blank'); }, 250); }
+
+        if (window.innerWidth > 768) {
+            VanillaTilt.init(document.querySelectorAll(".card"), { max: 10, speed: 400, glare: true, "max-glare": 0.2 });
         }
-
-        // 3. Form Submission
-        const form = document.getElementById('feedback-form');
-        const modal = document.getElementById('success-modal');
-
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const btn = document.getElementById('main-submit-btn');
-            btn.innerText = "Sending...";
-            const formData = new FormData(form);
-
-            fetch('https://api.web3forms.com/submit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify(Object.fromEntries(formData))
-            }).then(response => {
-                if (response.status == 200) {
-                    modal.style.display = 'flex';
-                    setTimeout(() => { modal.style.display = 'none'; form.reset(); btn.innerText = "Send Message"; }, 2500);
-                }
-            });
-        });
-
-        function openLink(url) { window.open(url, '_blank'); }
     </script>
 </body>
 </html>
