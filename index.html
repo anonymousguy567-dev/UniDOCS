@@ -29,30 +29,22 @@
         
         #vanta-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 
-        /* --- LIGHT MODE GLOWING GRID --- */
+        /* --- OPTIMIZED LIGHT MODE GLOWING GRID --- */
         [data-theme="light"] #vanta-canvas {
-            background-color: #f8f9fa;
-            overflow: hidden;
-        }
-
-        [data-theme="light"] #vanta-canvas::after {
-            content: "";
-            position: absolute;
-            top: -100%; left: -100%;
-            width: 300%; height: 300%;
+            background-color: var(--bg-color);
             background-image: 
-                linear-gradient(var(--sync-color) 1px, transparent 1px),
-                linear-gradient(90deg, var(--sync-color) 1px, transparent 1px);
+                linear-gradient(var(--sync-color) 0.8px, transparent 0.8px),
+                linear-gradient(90deg, var(--sync-color) 0.8px, transparent 0.8px);
             background-size: 50px 50px;
-            /* গ্লোয়িং ইফেক্ট তৈরির জন্য drop-shadow */
-            filter: drop-shadow(0 0 2px var(--sync-color)) drop-shadow(0 0 5px var(--sync-color));
-            opacity: 0.25;
-            animation: gridMove 20s linear infinite;
+            /* translate3d ব্রাউজারকে GPU ব্যবহার করতে বাধ্য করে, ল্যাগ কমায় */
+            animation: gridMove 25s linear infinite;
+            opacity: 0.12;
+            will-change: background-position;
         }
 
         @keyframes gridMove {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(50px, 50px); }
+            from { background-position: 0 0; }
+            to { background-position: 500px 500px; }
         }
 
         .theme-switch {
@@ -79,16 +71,16 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
         }
 
-        /* লাইট মোডে কার্ডের হালকা গ্লো ইফেক্ট */
+        /* Light Mode Glowing Card Border - CSS Filter বাদ দিয়ে Box Shadow ব্যবহার */
         [data-theme="light"] .card {
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05), 0 0 8px var(--sync-color);
+            box-shadow: 0 0 15px rgba(var(--sync-color), 0.1), 0 0 10px var(--sync-color);
             border: 1px solid var(--sync-color);
         }
 
         .card:hover { transform: translateY(-15px) scale(1.03) !important; box-shadow: 0 20px 40px rgba(0,0,0,0.1), 0 0 25px var(--sync-color); border-color: var(--sync-color); animation-play-state: paused; }
-        .card:active { transform: scale(0.95) !important; }
+        .card:active { transform: scale(0.95) !important; transition: 0.1s; }
 
-        .card .content { padding: 25px; text-align: center; }
+        .card .content { padding: 25px; text-align: center; pointer-events: none; }
         .card h3 { font-size: 1.4rem; margin-bottom: 10px; font-weight: 600; }
         .card p { opacity: 0.7; font-size: 0.85rem; line-height: 1.4; margin-bottom: 20px; }
 
@@ -104,13 +96,7 @@
         .footer-top { font-family: 'Dancing Script', cursive; font-size: 2rem; color: var(--sync-color); text-align: center; }
         .footer-bottom { font-size: 0.75rem; text-align: center; opacity: 0.5; letter-spacing: 2px; margin-top: 5px; }
 
-        @media (max-width: 768px) { .form-row { flex-direction: column; } .title { font-size: 2.5rem; } }
-      
-        .ai-disclaimer {
-            position: absolute; bottom: 15px; right: 20px; font-size: 0.65rem;
-            color: var(--sync-color); opacity: 0.6; font-weight: 300;
-            letter-spacing: 0.5px; z-index: 10;
-        }
+        .ai-disclaimer { position: absolute; bottom: 15px; right: 20px; font-size: 0.65rem; color: var(--sync-color); opacity: 0.6; font-weight: 300; letter-spacing: 0.5px; z-index: 10; }
     </style>
 </head>
 <body data-theme="dark">
@@ -127,7 +113,7 @@
         </h1>
         
         <div class="card-wrapper">
-            <div class="card" onclick="openLink('https://ahamedjubayer2003-hash.github.io/course-registration/')">
+            <div class="card" onclick="openLink('course-reg/index.html')">
                 <div class="content">
                     <h3>Course Registration</h3>
                     <p>Automated tool for RUET course registration forms.</p>
@@ -135,7 +121,7 @@
                 </div>
             </div>
 
-            <div class="card" onclick="openLink('https://ahamedjubayer2003-hash.github.io/exam-registration/')">
+            <div class="card" onclick="openLink('exam-reg/index.html')">
                 <div class="content">
                     <h3>Exam Registration</h3>
                     <p>Generate RUET exam registration documents instantly.</p>
@@ -143,7 +129,7 @@
                 </div>
             </div>
 
-            <div class="card" onclick="openLink('https://ahamedjubayer2003-hash.github.io/cover-page2404/')">
+            <div class="card" onclick="openLink('cover-page/index.html')">
                 <div class="content">
                     <h3>Cover Page</h3>
                     <p>Cover page generator for Assignment/Lab Report.</p>
@@ -153,12 +139,12 @@
         </div>
 
         <section id="feedback-section">
-            <p class="feedback-title">Share Your Thoughts,Ideas,Advice</p>
+            <p class="feedback-title">Share Your Thoughts, Ideas, Advice</p>
             <form id="feedback-form">
                 <input type="hidden" name="access_key" value="40cc5fb6-5cec-4102-ba71-7f261e4302e2">
                 <div class="form-row">
                     <input type="email" name="email" placeholder="Email" required>
-                    <input type="text" name="message" placeholder="Your Thoughts,Ideas,Advice" required>
+                    <input type="text" name="message" placeholder="Your Thoughts, Ideas, Advice" required>
                     <button type="submit" class="submit-btn" id="send-btn">Send</button>
                 </div>
             </form>
@@ -173,7 +159,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.dots.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
 
     <script>
@@ -187,7 +172,7 @@
                 vantaEffect.destroy();
                 vantaEffect = null;
             }
-            
+            // ডার্ক মোডে Vanta Net থাকবে, লাইট মোডে আমরা CSS Grid ব্যবহার করব
             if (theme === 'dark') {
                 vantaEffect = VANTA.NET({
                     el: "#vanta-canvas",
@@ -208,14 +193,11 @@
         themeBtn.addEventListener('click', () => {
             const isLight = body.getAttribute('data-theme') === 'light';
             const newTheme = isLight ? 'dark' : 'light';
-            
             body.setAttribute('data-theme', newTheme);
             themeBtn.querySelector('i').className = isLight ? 'fas fa-moon' : 'fas fa-sun';
-            
             initVanta(newTheme);
         });
 
-        // সিঙ্ক কালার লজিক (গ্রিড গ্লো এবং কার্ডের জন্য)
         setInterval(() => {
             hue = (hue + 1) % 360;
             const hslColor = `hsl(${hue}, 85%, 60%)`;
@@ -227,10 +209,12 @@
             document.documentElement.style.setProperty('--sync-color', hslColor);
         }, 150);
 
-        function openLink(url) { setTimeout(() => { window.open(url, '_blank'); }, 250); }
+        function openLink(url) { 
+            setTimeout(() => { window.location.href = url; }, 250); 
+        }
 
         if (window.innerWidth > 768) {
-            VanillaTilt.init(document.querySelectorAll(".card"), { max: 10, speed: 400, glare: true, "max-gl-request": 0.2 });
+            VanillaTilt.init(document.querySelectorAll(".card"), { max: 10, speed: 400, glare: true, "max-glare": 0.2 });
         }
     </script>
 </body>
