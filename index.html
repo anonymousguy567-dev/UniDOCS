@@ -29,14 +29,12 @@
         
         #vanta-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 
-        /* --- OPTIMIZED LIGHT MODE GLOWING GRID --- */
         [data-theme="light"] #vanta-canvas {
             background-color: var(--bg-color);
             background-image: 
                 linear-gradient(var(--sync-color) 0.8px, transparent 0.8px),
                 linear-gradient(90deg, var(--sync-color) 0.8px, transparent 0.8px);
             background-size: 50px 50px;
-            /* translate3d ব্রাউজারকে GPU ব্যবহার করতে বাধ্য করে, ল্যাগ কমায় */
             animation: gridMove 25s linear infinite;
             opacity: 0.12;
             will-change: background-position;
@@ -71,7 +69,6 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
         }
 
-        /* Light Mode Glowing Card Border - CSS Filter বাদ দিয়ে Box Shadow ব্যবহার */
         [data-theme="light"] .card {
             box-shadow: 0 0 15px rgba(var(--sync-color), 0.1), 0 0 10px var(--sync-color);
             border: 1px solid var(--sync-color);
@@ -87,12 +84,28 @@
         .btn { padding: 10px 22px; background: transparent; border: 1.5px solid var(--sync-color); border-radius: 30px; font-weight: 700; font-size: 0.75rem; color: var(--text-color); transition: 0.3s; }
         .card:hover .btn { background: var(--sync-color); color: #fff; }
 
-        #feedback-section { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 30px; padding: 35px; width: 90%; max-width: 900px; margin-bottom: 60px; backdrop-filter: blur(10px); }
+        /* --- CONTACT BOX FIX --- */
+        #feedback-section { 
+            background: var(--card-bg); border: 1px solid var(--border-color); 
+            border-radius: 30px; padding: 35px; width: 95%; max-width: 900px; 
+            margin-bottom: 60px; backdrop-filter: blur(10px); 
+        }
         .feedback-title { font-family: 'Dancing Script', cursive; font-size: 2.2rem; text-align: center; color: var(--sync-color); margin-bottom: 20px; }
+        
         .form-row { display: flex; gap: 15px; }
-        .form-row input { flex: 1; padding: 14px; border-radius: 12px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.03); color: var(--text-color); outline: none; }
-        .submit-btn { padding: 14px 28px; background: var(--sync-color); color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
+        .form-row input { flex: 1; padding: 14px; border-radius: 12px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); color: var(--text-color); outline: none; }
+        .submit-btn { padding: 14px 28px; background: var(--sync-color); color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .submit-btn:hover { opacity: 0.9; transform: scale(1.02); }
 
+        /* Mobile Responsive for Feedback Box */
+        @media (max-width: 768px) {
+            .form-row { flex-direction: column; gap: 12px; }
+            .form-row input, .submit-btn { width: 100%; }
+            .container { padding-top: 40px; }
+            .title { margin-bottom: 30px; }
+        }
+
+        footer { margin-top: 20px; }
         .footer-top { font-family: 'Dancing Script', cursive; font-size: 2rem; color: var(--sync-color); text-align: center; }
         .footer-bottom { font-size: 0.75rem; text-align: center; opacity: 0.5; letter-spacing: 2px; margin-top: 5px; }
 
@@ -139,12 +152,12 @@
         </div>
 
         <section id="feedback-section">
-            <p class="feedback-title">Share Your Thoughts, Ideas, Advice</p>
+            <p class="feedback-title">Share Your Thoughts,Advice</p>
             <form id="feedback-form">
                 <input type="hidden" name="access_key" value="40cc5fb6-5cec-4102-ba71-7f261e4302e2">
                 <div class="form-row">
-                    <input type="email" name="email" placeholder="Email" required>
-                    <input type="text" name="message" placeholder="Your Thoughts, Ideas, Advice" required>
+                    <input type="email" name="email" placeholder="Your Email" required>
+                    <input type="text" name="message" placeholder="Ideas or Advice..." required>
                     <button type="submit" class="submit-btn" id="send-btn">Send</button>
                 </div>
             </form>
@@ -154,7 +167,7 @@
             <p class="footer-top">Think, Build, Inspire.</p>
             <p class="footer-bottom">DESIGNED FOR RUETians | 2026</p>
         </footer>
-      <div class="ai-disclaimer">This website is developed with the help of AI</div>
+      <div class="ai-disclaimer">Developed with AI assistance</div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
@@ -172,7 +185,6 @@
                 vantaEffect.destroy();
                 vantaEffect = null;
             }
-            // ডার্ক মোডে Vanta Net থাকবে, লাইট মোডে আমরা CSS Grid ব্যবহার করব
             if (theme === 'dark') {
                 vantaEffect = VANTA.NET({
                     el: "#vanta-canvas",
@@ -181,8 +193,8 @@
                     scale: 1.00, scaleMobile: 1.00,
                     color: 0xff3f81,
                     backgroundColor: 0x050505,
-                    points: window.innerWidth < 768 ? 8.00 : 15.00,
-                    maxDistance: 20.00,
+                    points: window.innerWidth < 768 ? 10.00 : 18.00,
+                    maxDistance: 22.00,
                     spacing: 16.00
                 });
             }
@@ -219,4 +231,3 @@
     </script>
 </body>
 </html>
-
