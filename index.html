@@ -5,15 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UniDOCS Generator | RUET</title>
     
-    <link rel="icon" type="image/png" href="https://i.ibb.co.com/QV23wsZ/Screenshot-2026-01-21-005953.jpg">
+    <link rel="icon" type="image/png" href="https://i.ibb.co.com/TD7S4rdt/ruet-monogram-1545x1850.png">
     
     <meta property="og:title" content="UniDOCS Generator | RUET">
-    <meta property="og:description" content="Automated tool suite for RUET students: Course Registration, Exam Forms, and Cover Pages.">
+    <meta property="og:description" content="Automated tool suite for RUETians: Course Registration, Exam Forms, and Cover Pages.">
     <meta property="og:image" content="https://i.ibb.co.com/TD7S4rdt/ruet-monogram-1545x1850.png">
     <meta property="og:url" content="https://anonymousguy567-dev.github.io/UniDOCS/">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:type" content="website">
 
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="UniDOCS Generator | RUET">
+    <meta name="twitter:description" content="Official academic document generator for RUET students.">
     <meta name="twitter:image" content="https://i.ibb.co.com/TD7S4rdt/ruet-monogram-1545x1850.png">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -40,22 +44,6 @@
         
         #vanta-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 
-        [data-theme="light"] #vanta-canvas {
-            background-color: var(--bg-color);
-            background-image: 
-                linear-gradient(var(--sync-color) 0.8px, transparent 0.8px),
-                linear-gradient(90deg, var(--sync-color) 0.8px, transparent 0.8px);
-            background-size: 50px 50px;
-            animation: gridMove 25s linear infinite;
-            opacity: 0.12;
-            will-change: background-position;
-        }
-
-        @keyframes gridMove {
-            from { background-position: 0 0; }
-            to { background-position: 500px 500px; }
-        }
-
         .theme-switch {
             position: fixed; top: 20px; right: 20px; z-index: 1000; 
             background: var(--card-bg); border: 1px solid var(--border-color);
@@ -80,13 +68,7 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
         }
 
-        [data-theme="light"] .card {
-            box-shadow: 0 0 15px rgba(var(--sync-color), 0.1), 0 0 10px var(--sync-color);
-            border: 1px solid var(--sync-color);
-        }
-
         .card:hover { transform: translateY(-15px) scale(1.03) !important; box-shadow: 0 20px 40px rgba(0,0,0,0.1), 0 0 25px var(--sync-color); border-color: var(--sync-color); animation-play-state: paused; }
-        .card:active { transform: scale(0.95) !important; transition: 0.1s; }
 
         .card .content { padding: 25px; text-align: center; pointer-events: none; }
         .card h3 { font-size: 1.4rem; margin-bottom: 10px; font-weight: 600; }
@@ -101,20 +83,15 @@
         .form-row { display: flex; gap: 15px; }
         .form-row input { flex: 1; padding: 14px; border-radius: 12px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); color: var(--text-color); outline: none; }
         .submit-btn { padding: 14px 28px; background: var(--sync-color); color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; }
-        .submit-btn:hover { opacity: 0.9; transform: scale(1.02); }
 
         @media (max-width: 768px) {
             .form-row { flex-direction: column; gap: 12px; }
-            .form-row input, .submit-btn { width: 100%; }
             .container { padding-top: 40px; }
-            .title { margin-bottom: 30px; }
         }
 
-        footer { margin-top: 20px; }
         .footer-top { font-family: 'Dancing Script', cursive; font-size: 2rem; color: var(--sync-color); text-align: center; }
         .footer-bottom { font-size: 0.75rem; text-align: center; opacity: 0.5; letter-spacing: 2px; margin-top: 5px; }
-
-        .ai-disclaimer { position: absolute; bottom: 15px; right: 20px; font-size: 0.65rem; color: var(--sync-color); opacity: 0.6; font-weight: 300; letter-spacing: 0.5px; z-index: 10; }
+        .ai-disclaimer { position: absolute; bottom: 15px; right: 20px; font-size: 0.65rem; color: var(--sync-color); opacity: 0.6; z-index: 10; }
     </style>
 </head>
 <body data-theme="dark">
@@ -127,7 +104,7 @@
 
     <div class="container">
         <h1 class="title">
-            <span class="holo-text">UniDOCS</span> <span class="white-text">Generator | RUET</span>
+            <span class="holo-text">UniDOCS</span> Hub
         </h1>
         
         <div class="card-wrapper">
@@ -157,7 +134,7 @@
         </div>
 
         <section id="feedback-section">
-            <p class="feedback-title">Share Your Thoughts,Advice</p>
+            <p class="feedback-title">Share Your Thoughts</p>
             <form id="feedback-form">
                 <input type="hidden" name="access_key" value="40cc5fb6-5cec-4102-ba71-7f261e4302e2">
                 <div class="form-row">
@@ -186,10 +163,7 @@
         const themeBtn = document.getElementById('theme-toggle');
 
         function initVanta(theme) {
-            if (vantaEffect) {
-                vantaEffect.destroy();
-                vantaEffect = null;
-            }
+            if (vantaEffect) { vantaEffect.destroy(); }
             if (theme === 'dark') {
                 vantaEffect = VANTA.NET({
                     el: "#vanta-canvas",
@@ -219,16 +193,11 @@
             hue = (hue + 1) % 360;
             const hslColor = `hsl(${hue}, 85%, 60%)`;
             const hexColor = new THREE.Color(hslColor).getHex();
-            
-            if(vantaEffect && vantaEffect.setOptions) {
-                vantaEffect.setOptions({ color: hexColor });
-            }
+            if(vantaEffect && vantaEffect.setOptions) { vantaEffect.setOptions({ color: hexColor }); }
             document.documentElement.style.setProperty('--sync-color', hslColor);
         }, 150);
 
-        function openLink(url) { 
-            setTimeout(() => { window.location.href = url; }, 250); 
-        }
+        function openLink(url) { setTimeout(() => { window.location.href = url; }, 250); }
 
         if (window.innerWidth > 768) {
             VanillaTilt.init(document.querySelectorAll(".card"), { max: 10, speed: 400, glare: true, "max-glare": 0.2 });
@@ -236,6 +205,3 @@
     </script>
 </body>
 </html>
-
-
-
