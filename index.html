@@ -6,19 +6,12 @@
     <title>UniDOCS Generator | RUET</title>
     
     <link rel="icon" type="image/png" href="https://i.ibb.co.com/TD7S4rdt/ruet-monogram-1545x1850.png">
-    
     <meta property="og:title" content="UniDOCS Generator | RUET">
     <meta property="og:description" content="Automated tool suite for RUETians: Course Registration, Exam Forms, and Cover Pages.">
     <meta property="og:image" content="https://i.ibb.co.com/TD7S4rdt/ruet-monogram-1545x1850.png">
     <meta property="og:url" content="https://anonymousguy567-dev.github.io/UniDOCS/">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
     <meta property="og:type" content="website">
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="UniDOCS Generator | RUET">
-    <meta name="twitter:description" content="Official academic document generator for RUET students.">
-    <meta name="twitter:image" content="https://i.ibb.co.com/TD7S4rdt/ruet-monogram-1545x1850.png">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -39,9 +32,7 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; transition: background-color 0.4s ease, color 0.4s ease; }
-
         body { background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; min-height: 100vh; }
-        
         #vanta-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 
         .theme-switch {
@@ -52,7 +43,6 @@
         }
 
         .container { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; padding: 80px 20px 100px 20px; }
-
         .title { font-size: clamp(2.2rem, 8vw, 4.5rem); margin-bottom: 60px; text-align: center; font-weight: 700; letter-spacing: 2px; }
         .holo-text { color: var(--sync-color); text-shadow: 0 0 15px var(--sync-color); }
 
@@ -64,12 +54,11 @@
             position: relative; width: 100%; max-width: 310px; height: 380px;
             background: var(--card-bg); border-radius: 25px; border: 1px solid var(--border-color);
             backdrop-filter: blur(15px); display: flex; justify-content: center; align-items: center;
-            cursor: pointer; animation: floating 5s ease-in-out infinite; will-change: transform;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            cursor: pointer; animation: floating 5s ease-in-out infinite;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .card:hover { transform: translateY(-15px) scale(1.03) !important; box-shadow: 0 20px 40px rgba(0,0,0,0.1), 0 0 25px var(--sync-color); border-color: var(--sync-color); animation-play-state: paused; }
-
         .card .content { padding: 25px; text-align: center; pointer-events: none; }
         .card h3 { font-size: 1.4rem; margin-bottom: 10px; font-weight: 600; }
         .card p { opacity: 0.7; font-size: 0.85rem; line-height: 1.4; margin-bottom: 20px; }
@@ -84,14 +73,24 @@
         .form-row input { flex: 1; padding: 14px; border-radius: 12px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.02); color: var(--text-color); outline: none; }
         .submit-btn { padding: 14px 28px; background: var(--sync-color); color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; }
 
-        @media (max-width: 768px) {
-            .form-row { flex-direction: column; gap: 12px; }
-            .container { padding-top: 40px; }
+        /* --- POPUP STYLES --- */
+        #success-popup {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
+            background: rgba(10, 10, 10, 0.9); border: 1px solid var(--sync-color); border-radius: 20px;
+            padding: 40px; text-align: center; z-index: 2000; backdrop-filter: blur(20px);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), 0 0 20px var(--sync-color);
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        #success-popup.show { display: block; transform: translate(-50%, -50%) scale(1); }
+        .popup-icon { font-size: 3rem; color: var(--sync-color); margin-bottom: 15px; }
+        .popup-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 10px; }
+        .popup-close { margin-top: 20px; padding: 8px 25px; border-radius: 20px; background: var(--sync-color); color: #fff; border: none; cursor: pointer; font-weight: 600; }
+
+        @media (max-width: 768px) { .form-row { flex-direction: column; gap: 12px; } .container { padding-top: 40px; } }
 
         .footer-top { font-family: 'Dancing Script', cursive; font-size: 2rem; color: var(--sync-color); text-align: center; }
         .footer-bottom { font-size: 0.75rem; text-align: center; opacity: 0.5; letter-spacing: 2px; margin-top: 5px; }
-        .ai-disclaimer { position: absolute; bottom: 15px; right: 20px; font-size: 0.65rem; color: var(--sync-color); opacity: 0.6; z-index: 10; }
+        .ai-disclaimer { position: absolute; bottom: 15px; right: 20px; font-size: 0.65rem; color: var(--sync-color); opacity: 0.6; font-weight: 300; letter-spacing: 0.5px; z-index: 10; }
     </style>
 </head>
 <body data-theme="dark">
@@ -103,9 +102,7 @@
     </button>
 
     <div class="container">
-        <h1 class="title">
-            <span class="holo-text">UniDOCS</span> Hub
-        </h1>
+        <h1 class="title"><span class="holo-text">UniDOCS</span> Generator | RUET</h1>
         
         <div class="card-wrapper">
             <div class="card" onclick="openLink('https://anonymousguy567-dev.github.io/course-registration/')">
@@ -134,9 +131,9 @@
         </div>
 
         <section id="feedback-section">
-            <p class="feedback-title">Share Your Thoughts</p>
-            <form id="feedback-form">
-                <input type="hidden" name="access_key" value="40cc5fb6-5cec-4102-ba71-7f261e4302e2">
+            <p class="feedback-title">Share Your Thoughts,Advice</p>
+            <form id="feedback-form" action="https://api.web3forms.com/submit" method="POST">
+                <input type="hidden" name="access_key" value="41bd2a51-0e05-4ebb-871b-9e0c0b55daa2">
                 <div class="form-row">
                     <input type="email" name="email" placeholder="Your Email" required>
                     <input type="text" name="message" placeholder="Ideas or Advice..." required>
@@ -149,7 +146,14 @@
             <p class="footer-top">Think, Build, Inspire.</p>
             <p class="footer-bottom">DESIGNED FOR RUETians | 2026</p>
         </footer>
-      <div class="ai-disclaimer">Developed with AI assistance</div>
+        <div class="ai-disclaimer">Developed with AI assistance</div>
+    </div>
+
+    <div id="success-popup">
+        <div class="popup-icon"><i class="fas fa-check-circle"></i></div>
+        <div class="popup-title">Message Sent!</div>
+        <p>Thank you for your thoughts and advice.</p>
+        <button class="popup-close" onclick="closePopup()">Close</button>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
@@ -202,6 +206,42 @@
         if (window.innerWidth > 768) {
             VanillaTilt.init(document.querySelectorAll(".card"), { max: 10, speed: 400, glare: true, "max-glare": 0.2 });
         }
+
+        // --- AJAX FORM SUBMISSION & AUTO-CLOSE POPUP ---
+        const form = document.getElementById('feedback-form');
+        const popup = document.getElementById('success-popup');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('send-btn');
+            btn.innerText = 'Sending...';
+            btn.disabled = true;
+
+            const formData = new FormData(form);
+            fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    popup.classList.add('show');
+                    form.reset();
+                    // AUTO CLOSE AFTER 1.5 SECONDS (1500ms)
+                    setTimeout(() => {
+                        closePopup();
+                    }, 2500);
+                } else {
+                    alert('Oops! Something went wrong.');
+                }
+            })
+            .catch(error => alert('Network error. Please try again.'))
+            .finally(() => {
+                btn.innerText = 'Send';
+                btn.disabled = false;
+            });
+        });
+
+        function closePopup() { popup.classList.remove('show'); }
     </script>
 </body>
 </html>
