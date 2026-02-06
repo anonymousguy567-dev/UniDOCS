@@ -19,7 +19,7 @@
             --bg-base: #fdf8f4;
             --text-main: #222;
             --glass: rgba(255, 255, 255, 0.12);
-            --border-glass: rgba(255, 255, 255, 0.4);
+            --border-glass: rgba(255, 106, 0, 0.3);
             --blob-opacity: 0.35;
             --grid-color: rgba(255, 106, 0, 0.08);
             --glitch-red: #ff3c00;
@@ -119,16 +119,16 @@
         }
 
         /* --- Container & Portal Zoom --- */
-        .container { max-width: 1000px; margin: 0 auto; padding: 140px 20px 50px; display: flex; flex-direction: column; gap: 80px; transition: transform 1s cubic-bezier(0.7, 0, 0.3, 1), opacity 0.8s ease; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 140px 20px 50px; display: flex; flex-direction: column; gap: 80px; transition: transform 0.6s cubic-bezier(0.7, 0, 0.3, 1), opacity 0.6s ease; }
         
         .portal-active .container { transform: scale(5); opacity: 0; pointer-events: none; }
-        .portal-active nav, .portal-active .progress-container, .portal-active .relative-footer { opacity: 0; transition: opacity 0.5s ease; }
+        .portal-active nav, .portal-active .progress-container, .portal-active .relative-footer { opacity: 0; transition: opacity 0.4s ease; }
 
         .project-card { 
             display: flex; align-items: center; background: var(--glass); backdrop-filter: blur(25px); 
             border: 1px solid var(--border-glass); border-radius: 30px; padding: 30px; 
             text-decoration: none; color: inherit; opacity: 0; transform: translateY(30px); 
-            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.8s ease;
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.6s ease;
             position: relative;
         }
         .project-card.is-visible { opacity: 1; transform: translateY(0); }
@@ -138,11 +138,11 @@
             content: ""; position: absolute; inset: -2px; border-radius: 32px; padding: 2px;
             background: linear-gradient(90deg, transparent, var(--orange-main), transparent);
             background-size: 200% 100%; -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
+            -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
         }
         .project-card:hover::before { opacity: 1; animation: moveBorder 2s linear infinite; }
 
-        .project-card:hover { transform: translateY(-5px) !important; box-shadow: 0 20px 40px -10px rgba(255, 106, 0, 0.2); }
+        .project-card:hover { transform: translateY(-5px) !important; border-color: var(--orange-main); box-shadow: 0 20px 40px -10px rgba(255, 106, 0, 0.2); }
         .project-card:nth-child(even) { flex-direction: row-reverse; }
 
         .content { flex: 1; padding: 0 10px; }
@@ -163,7 +163,7 @@
         .img-holder img { width: 100%; height: 100%; object-fit: cover; }
 
         /* --- Footer --- */
-        .footer-text { text-align: center; padding: 60px 20px 100px; opacity: 0; transform: translateY(20px); transition: 1s ease-out; }
+        .footer-text { text-align: center; padding: 60px 20px 100px; opacity: 0; transform: translateY(20px); transition: 0.8s ease-out; }
         .footer-text.is-visible { opacity: 1; transform: translateY(0); }
         .footer-text h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 10px; color: var(--text-main); }
         .footer-text p { font-size: 0.7rem; letter-spacing: 2px; }
@@ -175,7 +175,7 @@
         }
 
         /* Portal Wipe */
-        #portal-wipe { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 99999; opacity: 0; pointer-events: none; transition: opacity 0.6s ease; }
+        #portal-wipe { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 99999; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
         [data-theme="dark"] #portal-wipe { background: #000; }
         #portal-wipe.active { opacity: 1; }
 
@@ -185,7 +185,10 @@
             .nav-title { font-size: 0.8rem; }
             .contact-btn { padding: 6px 12px; font-size: 0.7rem; }
             
-            .container { padding-top: 120px; gap: 50px; }
+            /* Fast Mobile Animations */
+            .container { padding-top: 120px; gap: 50px; transition-duration: 0.5s; }
+            .project-card { transition-duration: 0.5s; }
+
             .project-card, .project-card:nth-child(even) { flex-direction: column; padding: 25px; text-align: center; }
             .img-holder { width: 100%; height: 180px; margin-top: 20px; }
             .content { padding: 0; }
@@ -286,8 +289,8 @@
                 e.preventDefault();
                 const targetUrl = this.href;
                 document.body.classList.add('portal-active');
-                setTimeout(() => { document.getElementById('portal-wipe').classList.add('active'); }, 500);
-                setTimeout(() => { window.location.href = targetUrl; }, 1100);
+                setTimeout(() => { document.getElementById('portal-wipe').classList.add('active'); }, 400); // Fast Wipe
+                setTimeout(() => { window.location.href = targetUrl; }, 800); // Fast Redirect
             });
         });
 
