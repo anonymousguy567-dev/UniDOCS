@@ -18,10 +18,9 @@
             --orange-deep: #e65100;
             --bg-base: #fdf8f4;
             --text-main: #222;
-            --glass: rgba(255, 255, 255, 0.12);
+            --glass: rgba(255, 255, 255, 0.15);
             --border-glass: rgba(255, 106, 0, 0.3);
-            --blob-opacity: 0.35;
-            --grid-color: rgba(255, 106, 0, 0.08);
+            --grid-dot: rgba(255, 106, 0, 0.2);
             --glitch-red: #ff3c00;
             --glitch-blue: #00f2ff;
         }
@@ -29,10 +28,9 @@
         [data-theme="dark"] {
             --bg-base: #0a0a0a;
             --text-main: #f0f0f0;
-            --glass: rgba(20, 20, 20, 0.6);
+            --glass: rgba(20, 20, 20, 0.5);
             --border-glass: rgba(255, 106, 0, 0.2);
-            --blob-opacity: 0.25;
-            --grid-color: rgba(255, 106, 0, 0.15);
+            --grid-dot: rgba(255, 140, 0, 0.15);
             --orange-main: #ff8c00;
         }
 
@@ -43,30 +41,38 @@
             font-family: 'Space Grotesk', sans-serif;
             overflow-x: hidden;
             scroll-behavior: smooth;
-            transition: background 0.5s ease, color 0.5s ease;
+            transition: background 0.5s ease;
         }
 
-        /* --- Scroll Progress Bar --- */
-        .progress-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 5px; z-index: 10001;
+        /* --- Simple Slide Curtain (New Animation) --- */
+        #slide-curtain {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: var(--orange-main); /* অরেঞ্জ কার্টেইন */
+            z-index: 100000;
+            transform: translateX(100%); /* শুরুতে স্ক্রিনের ডানে লুকানো */
+            transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+            pointer-events: none;
         }
-        .progress-bar {
-            height: 100%; background: var(--orange-deep); width: 0%;
-            box-shadow: 0 0 8px var(--orange-main); transition: width 0.1s ease-out;
-        }
+        /* যখন active ক্লাস যুক্ত হবে তখন স্ক্রিনে আসবে */
+        #slide-curtain.active { transform: translateX(0%); }
 
         /* --- Success Popup --- */
         #success-popup {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
-            background: rgba(46, 204, 113, 0.9); color: white;
+            background: rgba(46, 204, 113, 0.95); color: white;
             padding: 15px 30px; border-radius: 50px; font-weight: 600;
             z-index: 30000; backdrop-filter: blur(10px);
             transition: top 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            width: auto; max-width: 90%; text-align: center;
+            pointer-events: none;
         }
         #success-popup.show { top: 30px; }
 
-        /* --- Navbar with Animated Border --- */
+        #grid-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 5px; z-index: 10001; }
+        .progress-bar { height: 100%; background: var(--orange-deep); width: 0%; transition: width 0.1s; }
+
         nav {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
             width: 90%; max-width: 1200px; height: 70px;
@@ -83,126 +89,57 @@
         }
         @keyframes moveBorder { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
 
-        .nav-title { font-weight: 700; font-size: 1rem; letter-spacing: 0.5px; cursor: pointer; transition: 0.3s; }
-        .nav-title:hover { opacity: 0.6; }
-
+        .nav-title { font-weight: 700; font-size: 1rem; cursor: pointer; }
         .nav-right { display: flex; align-items: center; gap: 10px; }
-
-        .theme-switch {
-            width: 44px; height: 22px; background: #ddd; border-radius: 50px; position: relative; cursor: pointer; transition: 0.3s;
-            flex-shrink: 0;
-        }
+        .theme-switch { width: 44px; height: 22px; background: #ddd; border-radius: 50px; position: relative; cursor: pointer; }
         [data-theme="dark"] .theme-switch { background: var(--orange-main); }
-        .theme-switch::after {
-            content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px;
-            background: white; border-radius: 50%; transition: 0.3s;
-        }
+        .theme-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; background: white; border-radius: 50%; transition: 0.3s; }
         [data-theme="dark"] .theme-switch::after { left: 24px; }
+        .contact-btn { background: var(--orange-main); color: white; border: none; padding: 8px 15px; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 0.8rem; }
 
-        .contact-btn {
-            background: var(--orange-main); color: white; border: none; padding: 8px 15px;
-            border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.3s;
-            white-space: nowrap; font-size: 0.8rem;
-        }
-
-        /* --- Background --- */
-        .bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
-        .pixel-grid { 
-            position: absolute; width: 150%; height: 150%; 
-            background-image: linear-gradient(90deg, var(--grid-color) 1px, transparent 1px), linear-gradient(var(--grid-color) 1px, transparent 1px); 
-            background-size: 40px 40px; transform: translate(-20%, -20%) rotateX(10deg); 
-        }
-        .floating-blob { 
-            position: absolute; width: 300px; height: 300px; 
-            background: radial-gradient(circle, var(--orange-main) 0%, transparent 70%); 
-            filter: blur(50px); opacity: var(--blob-opacity); pointer-events: none; 
-        }
-
-        /* --- Container & Portal Zoom --- */
-        .container { max-width: 1000px; margin: 0 auto; padding: 140px 20px 50px; display: flex; flex-direction: column; gap: 80px; transition: transform 0.6s cubic-bezier(0.7, 0, 0.3, 1), opacity 0.6s ease; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 140px 20px 50px; display: flex; flex-direction: column; gap: 60px; }
         
-        .portal-active .container { transform: scale(5); opacity: 0; pointer-events: none; }
-        .portal-active nav, .portal-active .progress-container, .portal-active .relative-footer { opacity: 0; transition: opacity 0.4s ease; }
-
         .project-card { 
             display: flex; align-items: center; background: var(--glass); backdrop-filter: blur(25px); 
-            border: 1px solid var(--border-glass); border-radius: 30px; padding: 30px; 
+            border: 1px solid var(--border-glass); border-radius: 35px; padding: 20px; gap: 30px;
             text-decoration: none; color: inherit; opacity: 0; transform: translateY(30px); 
-            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.6s ease;
-            position: relative;
+            transition: transform 0.6s, opacity 0.6s; position: relative;
         }
         .project-card.is-visible { opacity: 1; transform: translateY(0); }
 
-        /* Dynamic Glow Border on Hover */
-        .project-card::before {
-            content: ""; position: absolute; inset: -2px; border-radius: 32px; padding: 2px;
-            background: linear-gradient(90deg, transparent, var(--orange-main), transparent);
-            background-size: 200% 100%; -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0; transition: opacity 0.3s ease; pointer-events: none;
-        }
-        .project-card:hover::before { opacity: 1; animation: moveBorder 2s linear infinite; }
+        .content { flex: 1; padding: 20px; display: flex; flex-direction: column; justify-content: center; }
 
-        .project-card:hover { transform: translateY(-5px) !important; border-color: var(--orange-main); box-shadow: 0 20px 40px -10px rgba(255, 106, 0, 0.2); }
+        .img-holder { 
+            flex: 1.2; height: 320px; background: transparent; border: none; padding: 0; overflow: hidden; position: relative; 
+            -webkit-mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+            mask-image: radial-gradient(ellipse at center, black 70%, transparent 100%);
+            transition: transform 0.5s ease;
+        }
+        .img-holder img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .project-card:hover .img-holder img { transform: scale(1.1); }
+        .project-card:hover .img-holder { transform: scale(1.02); }
+
         .project-card:nth-child(even) { flex-direction: row-reverse; }
+        .project-card:hover { transform: translateY(-5px) !important; box-shadow: 0 20px 50px -10px rgba(0,0,0,0.3); border-color: var(--orange-main); }
 
-        .content { flex: 1; padding: 0 10px; }
-        .glitch-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 10px; position: relative; }
-        .content p { font-size: 0.9rem; line-height: 1.4; opacity: 0.8; }
-        
-        .project-card:hover .glitch-title { animation: glitch-skew 1s infinite linear alternate-reverse; }
-        .glitch-title::before, .glitch-title::after {
-            content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.8; display: none;
-        }
-        .project-card:hover .glitch-title::before { display: block; left: 1px; text-shadow: -1px 0 var(--glitch-red); clip: rect(20px, 900px, 40px, 0); animation: glitch-anim 5s infinite linear alternate-reverse; }
-        .project-card:hover .glitch-title::after { display: block; left: -1px; text-shadow: -1px 0 var(--glitch-blue); clip: rect(0px, 900px, 15px, 0); animation: glitch-anim 5s infinite linear alternate-reverse; }
+        .footer-text { text-align: center; padding: 60px 20px 100px; }
+        .ai-credit { position: relative; width: 100%; font-size: 0.6rem; opacity: 0.5; text-align: center; padding-bottom: 20px; }
 
-        @keyframes glitch-anim { 0% { clip: rect(10px, 9999px, 20px, 0); } 100% { clip: rect(30px, 9999px, 50px, 0); } }
-        @keyframes glitch-skew { 0% { transform: skew(0deg); } 100% { transform: skew(1deg); } }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 20000; }
+        .modal-box { background: var(--glass); backdrop-filter: blur(30px); border: 1px solid var(--border-glass); padding: 30px; border-radius: 25px; width: 85%; max-width: 400px; text-align: center; }
 
-        .img-holder { width: 100%; max-width: 400px; height: 200px; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.1); margin-top: 15px; }
-        .img-holder img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* --- Footer --- */
-        .footer-text { text-align: center; padding: 60px 20px 100px; opacity: 0; transform: translateY(20px); transition: 0.8s ease-out; }
-        .footer-text.is-visible { opacity: 1; transform: translateY(0); }
-        .footer-text h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 10px; color: var(--text-main); }
-        .footer-text p { font-size: 0.7rem; letter-spacing: 2px; }
-        
-        .relative-footer { position: relative; width: 100%; }
-        .ai-credit { 
-            position: relative; bottom: 20px; left: 0; width: 100%;
-            font-size: 0.6rem; opacity: 0.5; letter-spacing: 0.5px; text-align: center; margin-top: 20px;
-        }
-
-        /* Portal Wipe */
-        #portal-wipe { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 99999; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
-        [data-theme="dark"] #portal-wipe { background: #000; }
-        #portal-wipe.active { opacity: 1; }
-
-        /* --- Mobile Responsive Updates --- */
         @media (max-width: 900px) {
-            nav { padding: 0 15px; }
-            .nav-title { font-size: 0.8rem; }
-            .contact-btn { padding: 6px 12px; font-size: 0.7rem; }
-            
-            /* Fast Mobile Animations */
-            .container { padding-top: 120px; gap: 50px; transition-duration: 0.5s; }
-            .project-card { transition-duration: 0.5s; }
-
-            .project-card, .project-card:nth-child(even) { flex-direction: column; padding: 25px; text-align: center; }
-            .img-holder { width: 100%; height: 180px; margin-top: 20px; }
-            .content { padding: 0; }
-            .glitch-title { font-size: 1.3rem; }
-            
-            .footer-text h1 { font-size: 1.3rem; }
-            .ai-credit { left: 50%; transform: translateX(-50%); position: absolute; bottom: 10px; }
-            .floating-blob { width: 200px; height: 200px; }
+            .project-card, .project-card:nth-child(even) { flex-direction: column; padding: 20px; }
+            .img-holder { width: 100%; height: 250px; margin-top: 15px; -webkit-mask-image: radial-gradient(ellipse at center, black 60%, transparent 100%); mask-image: radial-gradient(ellipse at center, black 60%, transparent 100%); }
+            .content { padding: 10px; text-align: center; }
         }
     </style>
 </head>
-<body data-theme="light">
+<body data-theme="dark">
 
-    <div id="portal-wipe"></div>
+    <canvas id="grid-canvas"></canvas>
+    <div id="slide-curtain"></div>
+    
     <div class="progress-container"><div class="progress-bar" id="myBar"></div></div>
     <div id="success-popup">✓ Message Sent Successfully!</div>
 
@@ -210,114 +147,138 @@
         <div class="nav-title" onclick="window.scrollTo(0,0)">UniDOCS GENERATOR | RUET</div>
         <div class="nav-right">
             <div class="theme-switch" onclick="toggleTheme()"></div>
-            <button class="contact-btn" onclick="document.getElementById('contactModal').style.display='flex'">CONTACT WITH US</button>
+            <button class="contact-btn" onclick="document.getElementById('contactModal').style.display='flex'">CONTACT</button>
         </div>
     </nav>
 
-    <div class="modal-overlay" id="contactModal" onclick="this.style.display='none'" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 20000;">
-        <div class="modal-box" onclick="event.stopPropagation()" style="background: var(--glass); backdrop-filter: blur(30px); border: 1px solid var(--border-glass); padding: 30px; border-radius: 25px; width: 85%; max-width: 400px; text-align: center; color: var(--text-main);">
+    <div class="modal-overlay" id="contactModal" onclick="this.style.display='none'">
+        <div class="modal-box" onclick="event.stopPropagation()">
             <h2 style="margin-bottom: 20px; text-transform: uppercase; font-size: 1.2rem;">Share your thought</h2>
             <form id="contactForm" action="https://api.web3forms.com/submit" method="POST" style="display:flex; flex-direction:column; gap:12px;">
                 <input type="hidden" name="access_key" value="41bd2a51-0e05-4ebb-871b-9e0c0b55daa2">
-                <input type="email" name="email" placeholder="Your Email" required style="padding:12px; border-radius:10px; border:1px solid var(--border-glass); background:rgba(255,255,255,0.1); color:inherit; outline:none; font-family:inherit; font-size: 0.9rem;">
-                <input type="text" name="message" placeholder="Your Idea" required style="padding:12px; border-radius:10px; border:1px solid var(--border-glass); background:rgba(255,255,255,0.1); color:inherit; outline:none; font-family:inherit; font-size: 0.9rem;">
-                <button type="submit" class="contact-btn" style="padding:12px; width:100%; font-size: 0.9rem;">SEND MESSAGE</button>
+                <input type="email" name="email" placeholder="Your Email" required style="padding:12px; border-radius:10px; border:1px solid var(--border-glass); background:rgba(255,255,255,0.1); color:inherit; outline:none;">
+                <input type="text" name="message" placeholder="Your Idea" required style="padding:12px; border-radius:10px; border:1px solid var(--border-glass); background:rgba(255,255,255,0.1); color:inherit; outline:none;">
+                <button type="submit" class="contact-btn" style="padding:12px; width:100%;">SEND MESSAGE</button>
             </form>
         </div>
     </div>
 
-    <div class="bg-container"><div class="pixel-grid"></div><div class="floating-blob" id="blob"></div></div>
-
     <div class="container">
         <a href="https://anonymousguy567-dev.github.io/course-registration/" class="project-card portal-link">
             <div class="content">
-                <h2 class="glitch-title" data-text="COURSE REGISTRATION">COURSE REGISTRATION</h2>
+                <h2 style="font-size: 1.8rem; margin-bottom: 15px;">COURSE REGISTRATION</h2>
                 <p>Automated tool for RUET course registration forms.</p>
             </div>
-            <div class="img-holder"><img src="https://i.ibb.co.com/27Bj825f/cf.jpg" alt="Course"></div>
+            <div class="img-holder">
+                <img src="https://i.ibb.co.com/27Bj825f/cf.jpg" alt="Course">
+            </div>
         </a>
 
         <a href="https://anonymousguy567-dev.github.io/exam-registration/" class="project-card portal-link">
             <div class="content">
-                <h2 class="glitch-title" data-text="EXAM REGISTRATION">EXAM REGISTRATION</h2>
+                <h2 style="font-size: 1.8rem; margin-bottom: 15px;">EXAM REGISTRATION</h2>
                 <p>Generate RUET exam registration documents instantly.</p>
             </div>
-            <div class="img-holder"><img src="https://i.ibb.co.com/PZcBCygF/exam-form.jpg" alt="Exam"></div>
+            <div class="img-holder">
+                <img src="https://i.ibb.co.com/PZcBCygF/exam-form.jpg" alt="Exam">
+            </div>
         </a>
 
         <a href="https://anonymousguy567-dev.github.io/cover-page/" class="project-card portal-link">
             <div class="content">
-                <h2 class="glitch-title" data-text="COVER PAGE HUB">COVER PAGE</h2>
+                <h2 style="font-size: 1.8rem; margin-bottom: 15px;">COVER PAGE</h2>
                 <p>Cover page generator for Assignment/Lab Report.</p>
             </div>
-            <div class="img-holder"><img src="https://i.ibb.co.com/3ygzDL3L/cover.jpg" alt="cover"></div>
+            <div class="img-holder">
+                <img src="https://i.ibb.co.com/3ygzDL3L/cover.jpg" alt="cover">
+            </div>
         </a>
     </div>
 
-    <div class="relative-footer">
-        <div class="footer-text reveal">
-            <h1>THINK, BUILD, INSPIRE</h1>
-            <p>DESIGNED FOR RUETIAN | 2026</p>
-        </div>
-        <div class="ai-credit">This website is developed through AI Assistance</div>
+    <div class="footer-text">
+        <h1>THINK, BUILD, INSPIRE</h1>
+        <p>DESIGNED FOR RUETIAN | 2026</p>
     </div>
+    <div class="ai-credit">This website is developed through AI Assistance</div>
 
     <script>
+        const canvas = document.getElementById('grid-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height, rows, cols;
+        const spacing = 30;
+        let mouse = { x: -1000, y: -1000 };
+
+        function initGrid() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            cols = Math.ceil(width / spacing) + 1;
+            rows = Math.ceil(height / spacing) + 1;
+        }
+
+        function drawGrid() {
+            ctx.clearRect(0, 0, width, height);
+            const dotColor = getComputedStyle(document.documentElement).getPropertyValue('--grid-dot');
+            ctx.fillStyle = dotColor;
+            for (let i = 0; i < cols; i++) {
+                for (let j = 0; j < rows; j++) {
+                    const x = i * spacing; const y = j * spacing;
+                    const dx = mouse.x - x; const dy = mouse.y - y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    let offset = dist < 150 ? (150 - dist) / 150 * 15 : 0;
+                    ctx.beginPath();
+                    ctx.arc(x - (dx/dist)*offset || x, y - (dy/dist)*offset || y, dist < 150 ? 3 : 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            requestAnimationFrame(drawGrid);
+        }
+        window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+        window.addEventListener('resize', initGrid);
+        initGrid(); drawGrid();
+
         function toggleTheme() {
             const body = document.body;
-            const currentTheme = body.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            const newTheme = body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
             body.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
         }
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        document.body.setAttribute('data-theme', savedTheme);
 
-        const observer = new IntersectionObserver((entries) => {
+        const observer = new IntersectionObserver(entries => {
             entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('is-visible'); });
         }, { threshold: 0.1 });
-        document.querySelectorAll('.project-card, .reveal').forEach(el => observer.observe(el));
+        document.querySelectorAll('.project-card').forEach(el => observer.observe(el));
 
         window.addEventListener('scroll', () => {
-            let winScroll = document.documentElement.scrollTop;
-            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            document.getElementById("myBar").style.width = (winScroll / height) * 100 + "%";
+            let scrolled = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+            document.getElementById("myBar").style.width = scrolled + "%";
         });
-
-        document.querySelectorAll('.portal-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const targetUrl = this.href;
-                document.body.classList.add('portal-active');
-                setTimeout(() => { document.getElementById('portal-wipe').classList.add('active'); }, 400); // Fast Wipe
-                setTimeout(() => { window.location.href = targetUrl; }, 800); // Fast Redirect
-            });
-        });
-
-        const blob = document.getElementById('blob');
-        let mouseX = 0, mouseY = 0, blobX = 0, blobY = 0;
-        document.addEventListener('mousemove', (e) => { 
-            mouseX = e.clientX || e.touches[0].clientX; 
-            mouseY = e.clientY || e.touches[0].clientY; 
-        });
-        
-        function animateBlob() {
-            blobX += (mouseX - blobX) * 0.05; blobY += (mouseY - blobY) * 0.05;
-            blob.style.transform = `translate3d(${blobX - 150}px, ${blobY - 150}px, 0)`;
-            requestAnimationFrame(animateBlob);
-        }
-        animateBlob();
 
         document.getElementById('contactForm').onsubmit = function(e) {
             e.preventDefault();
-            fetch(this.action, { method: 'POST', body: new FormData(this) }).then(() => {
-                document.getElementById('contactModal').style.display='none';
+            const popup = document.getElementById('success-popup');
+            fetch(this.action, { method: 'POST', body: new FormData(this) })
+            .then(() => {
+                document.getElementById('contactModal').style.display = 'none';
                 this.reset();
-                const pop = document.getElementById('success-popup');
-                pop.classList.add('show');
-                setTimeout(() => pop.classList.remove('show'), 2500);
+                popup.classList.add('show');
+                setTimeout(() => popup.classList.remove('show'), 2500);
             });
         };
+
+        // --- New Simple Slide Logic ---
+        document.querySelectorAll('.portal-link').forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                const targetUrl = this.href;
+                // Activate Curtain
+                document.getElementById('slide-curtain').classList.add('active');
+                
+                // Wait for curtain to cover screen (0.4s) then redirect
+                setTimeout(() => {
+                    window.location.href = targetUrl;
+                }, 400);
+            });
+        });
     </script>
 </body>
 </html>
