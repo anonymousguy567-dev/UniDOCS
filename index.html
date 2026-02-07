@@ -5,11 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UniDOCS Generator | RUET</title>
     <link rel="icon" type="image/png" href="https://i.ibb.co.com/TD7S4rdt/ruet-monogram-1545x1850.png">
-    <meta property="og:title" content="UniDOCS Generator | RUET">
-    <meta property="og:description" content="Automated tool suite for RUETians: Course Registration, Exam Forms, and Cover Pages.">
-    <meta property="og:image" content="https://i.ibb.co.com/TD7S4rdt/ruet-monogram-1545x1850.png">
-    <meta property="og:url" content="https://anonymousguy567-dev.github.io/UniDOCS/">
-    <meta property="og:type" content="website">
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
     
     <style>
@@ -24,7 +19,7 @@
             --grid-dot: rgba(255, 106, 0, 0.2);
             --glitch-red: #ff3c00;
             --glitch-blue: #00f2ff;
-            --menu-bg: rgba(255, 255, 255, 0.98); /* অপাসিটি বাড়ানো হয়েছে */
+            --menu-bg: rgba(255, 255, 255, 0.98);
             --scrollbar-track: #e0e0e0;
             --scrollbar-thumb: #ff6a00;
         }
@@ -37,12 +32,12 @@
             --border-glass: rgba(255, 106, 0, 0.2);
             --grid-dot: rgba(255, 140, 0, 0.15);
             --orange-main: #ff8c00;
-            --menu-bg: rgba(15, 15, 15, 0.98); /* অপাসিটি বাড়ানো হয়েছে */
+            --menu-bg: rgba(15, 15, 15, 0.98);
             --scrollbar-track: #1a1a1a;
             --scrollbar-thumb: #ff8c00;
         }
 
-        /* --- Scrollbar Fix --- */
+        /* --- Custom Scrollbar Fix --- */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--bg-base); }
         ::-webkit-scrollbar-thumb { background: var(--border-glass); border-radius: 10px; }
@@ -54,7 +49,7 @@
             background: var(--bg-base);
             color: var(--text-main);
             font-family: 'Space Grotesk', sans-serif;
-            overflow-x: hidden; /* সাইড স্ক্রল বন্ধ */
+            overflow-x: hidden;
             scroll-behavior: smooth;
             transition: background 0.5s ease;
         }
@@ -115,61 +110,63 @@
         .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 10px; }
         .hamburger span { display: block; width: 25px; height: 3px; background: var(--text-main); border-radius: 2px; transition: 0.3s; }
         
-        /* --- FIXED MOBILE SIDE DRAWER --- */
+        /* --- UPDATED MOBILE MENU --- */
         .mobile-menu {
             position: fixed; 
             top: 0; 
-            right: -100%; /* স্ক্রিন থেকে সম্পূর্ণ বাইরে */
-            width: 280px; 
+            right: -100%; /* শুরুতে লুকানো */
+            
+            /* WIDTH REDUCED HERE */
+            width: 70%;         /* স্ক্রিনের ৭০% জায়গা নিবে */
+            max-width: 250px;   /* ২৫০ পিক্সেলের বেশি চওড়া হবে না */
+            
             height: 100vh;
             background: var(--menu-bg); 
             backdrop-filter: blur(30px);
             z-index: 20000; 
             
-            /* Visibility Hidden ensures NO shadow is seen when closed */
             visibility: hidden;
             opacity: 0;
             
-            padding: 40px 30px; 
-            display: flex; flex-direction: column; gap: 40px;
-            box-shadow: -10px 0 40px rgba(0,0,0,0.4); 
+            padding: 40px 25px; /* প্যাডিং সামান্য কমানো হয়েছে */
+            display: flex; flex-direction: column; gap: 30px;
+            box-shadow: -5px 0 20px rgba(0,0,0,0.3); 
             border-left: 1px solid var(--border-glass);
             transition: all 0.4s cubic-bezier(0.77, 0, 0.175, 1);
         }
         
-        /* যখন Active হবে */
         .mobile-menu.active { 
             right: 0; 
             visibility: visible;
             opacity: 1;
         }
         
-        .mobile-item { display: flex; flex-direction: column; gap: 15px; }
-        .mobile-item label { font-size: 0.8rem; opacity: 0.6; letter-spacing: 2px; text-transform: uppercase; }
+        .mobile-item { display: flex; flex-direction: column; gap: 12px; }
+        .mobile-item label { font-size: 0.75rem; opacity: 0.6; letter-spacing: 2px; text-transform: uppercase; }
         
         .mob-btn {
             background: transparent; border: 1px solid var(--border-glass); color: var(--text-main);
-            padding: 15px; border-radius: 12px; font-weight: 700; text-align: left; cursor: pointer;
-            transition: 0.3s; font-family: inherit; font-size: 1rem;
+            padding: 12px; border-radius: 10px; font-weight: 700; text-align: left; cursor: pointer;
+            transition: 0.3s; font-family: inherit; font-size: 0.9rem;
         }
         .mob-btn:hover { background: var(--orange-main); color: white; border-color: var(--orange-main); }
         
-        .theme-options { display: flex; gap: 10px; }
+        .theme-options { display: flex; gap: 8px; }
         .theme-btn {
-            flex: 1; padding: 12px; border: 1px solid var(--border-glass); background: transparent;
-            color: var(--text-main); border-radius: 10px; cursor: pointer; font-weight: 600;
+            flex: 1; padding: 10px; border: 1px solid var(--border-glass); background: transparent;
+            color: var(--text-main); border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem;
         }
         .theme-btn.active { background: var(--orange-main); color: white; border-color: var(--orange-main); }
 
-        /* Menu Overlay (Click anywhere to close) */
+        /* --- Click Outside Overlay --- */
         .menu-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); 
+            background: rgba(0,0,0,0.6); /* একটু বেশি ডার্ক যাতে বোঝা যায় */
             z-index: 15000; 
             display: none; 
             opacity: 0; 
             transition: opacity 0.3s ease;
-            backdrop-filter: blur(3px);
+            backdrop-filter: blur(2px);
         }
         .menu-overlay.active { display: block; opacity: 1; }
 
@@ -208,7 +205,6 @@
         @media (max-width: 900px) {
             .nav-right { display: none; } 
             .hamburger { display: flex; } 
-            
             .project-card, .project-card:nth-child(even) { flex-direction: column; padding: 20px; }
             .img-holder { width: 100%; height: 250px; margin-top: 15px; }
             .content { padding: 10px; text-align: center; }
@@ -246,7 +242,7 @@
         
         <div class="nav-right">
             <div class="theme-switch" onclick="toggleTheme()"></div>
-            <button class="contact-btn" onclick="document.getElementById('contactModal').style.display='flex'">CONTACT WITH US </button>
+            <button class="contact-btn" onclick="document.getElementById('contactModal').style.display='flex'">CONTACT</button>
         </div>
 
         <div class="hamburger" onclick="toggleMobileMenu()">
