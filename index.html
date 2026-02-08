@@ -4,50 +4,79 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UniDOCS Generator | RUET</title>
-   <link rel="icon" type="image/png" href="https://i.ibb.co.com/TD7S4rdt/ruet-monogram-1545x1850.png">
+    <link rel="icon" type="image/png" href="https://i.ibb.co.com/TD7S4rdt/ruet-monogram-1545x1850.png">
     <meta property="og:title" content="UniDOCS Generator | RUET">
     <meta property="og:description" content="Automated tool suite for RUETians: Course Registration, Exam Forms, and Cover Pages.">
     <meta property="og:image" content="https://i.ibb.co.com/TD7S4rdt/ruet-monogram-1545x1850.png">
     <meta property="og:url" content="https://anonymousguy567-dev.github.io/UniDOCS/">
     <meta property="og:type" content="website">
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
-    
     <style>
         :root {
-            --orange-main: #ff6a00;
-            --orange-deep: #e65100;
+            /* --- LIGHT MODE VARIABLES --- */
             --bg-base: #fdf8f4;
             --text-main: #222;
             --glass: rgba(255, 255, 255, 0.15);
             --inner-box: rgba(255, 255, 255, 0.2);
             --border-glass: rgba(255, 106, 0, 0.3);
-            --grid-dot: rgba(255, 106, 0, 0.2); /* গ্রিড কালার (লাইট) */
-            --glitch-red: #ff3c00;
-            --glitch-blue: #00f2ff;
+            --grid-dot: rgba(255, 106, 0, 0.2);
+            --orange-main: #ff6a00;
+            --orange-deep: #e65100;
             --menu-bg: rgba(255, 255, 255, 0.98);
             --scrollbar-track: #e0e0e0;
             --scrollbar-thumb: #ff6a00;
         }
 
         [data-theme="dark"] {
+            /* --- DARK MODE VARIABLES --- */
             --bg-base: #0a0a0a;
             --text-main: #f0f0f0;
             --glass: rgba(20, 20, 20, 0.5);
             --inner-box: rgba(255, 255, 255, 0.03);
             --border-glass: rgba(255, 106, 0, 0.2);
-            --grid-dot: rgba(255, 140, 0, 0.15); /* গ্রিড কালার (ডার্ক) */
+            --grid-dot: rgba(255, 140, 0, 0.2);
             --orange-main: #ff8c00;
             --menu-bg: rgba(15, 15, 15, 0.98);
             --scrollbar-track: #1a1a1a;
             --scrollbar-thumb: #ff8c00;
         }
 
-        /* --- Scrollbar Fix --- */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-base); }
-        ::-webkit-scrollbar-thumb { background: var(--border-glass); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--orange-main); }
+        /* --- ANIMATIONS --- */
+        /* 1. Slow RGB Flow (20s Duration) */
+        @keyframes rgb-flow-border {
+            0% { border-color: #ff0000; box-shadow: 0 0 15px rgba(255, 0, 0, 0.1); }
+            20% { border-color: #ff00ff; box-shadow: 0 0 15px rgba(255, 0, 255, 0.1); }
+            40% { border-color: #0000ff; box-shadow: 0 0 15px rgba(0, 0, 255, 0.1); }
+            60% { border-color: #00ffff; box-shadow: 0 0 15px rgba(0, 255, 255, 0.1); }
+            80% { border-color: #00ff00; box-shadow: 0 0 15px rgba(0, 255, 0, 0.1); }
+            100% { border-color: #ff0000; box-shadow: 0 0 15px rgba(255, 0, 0, 0.1); }
+        }
 
+        @keyframes rgb-flow-bg {
+            0% { background-color: #ff0000; }
+            20% { background-color: #ff00ff; }
+            40% { background-color: #0000ff; }
+            60% { background-color: #00ffff; }
+            80% { background-color: #00ff00; }
+            100% { background-color: #ff0000; }
+        }
+
+        @keyframes rgb-flow-text {
+            0% { color: #ff0000; text-shadow: 0 0 5px rgba(255, 0, 0, 0.3); }
+            20% { color: #ff00ff; text-shadow: 0 0 5px rgba(255, 0, 255, 0.3); }
+            40% { color: #0000ff; text-shadow: 0 0 5px rgba(0, 0, 255, 0.3); }
+            60% { color: #00ffff; text-shadow: 0 0 5px rgba(0, 255, 255, 0.3); }
+            80% { color: #00ff00; text-shadow: 0 0 5px rgba(0, 255, 0, 0.3); }
+            100% { color: #ff0000; text-shadow: 0 0 5px rgba(255, 0, 0, 0.3); }
+        }
+
+        /* 2. Orange Glow Move (For Light Mode) */
+        @keyframes moveBorder { 
+            0% { background-position: 0% 50%; } 
+            100% { background-position: 200% 50%; } 
+        }
+
+        /* --- GLOBAL STYLES --- */
         html, body {
             margin: 0; padding: 0;
             width: 100%; height: 100%;
@@ -59,92 +88,96 @@
             transition: background 0.5s ease;
         }
 
-        /* --- Canvas Background --- */
-        #grid-canvas { 
-            position: fixed; top: 0; left: 0; 
-            width: 100%; height: 100%; 
-            z-index: -1; pointer-events: none; 
-        }
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        
+        /* Light Mode Scrollbar */
+        ::-webkit-scrollbar-thumb { background: var(--orange-main); border-radius: 10px; }
+        /* Dark Mode Scrollbar (RGB Sync) */
+        [data-theme="dark"] ::-webkit-scrollbar-thumb { background: #ff0000; animation: rgb-flow-bg 20s linear infinite; }
 
-        /* --- Slide Curtain --- */
+        /* Canvas & Curtain */
+        #grid-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+        
         #slide-curtain {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--orange-main);
-            z-index: 100000;
+            background: var(--orange-main); z-index: 100000;
             transform: translateX(100%);
             transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
             pointer-events: none;
         }
+        [data-theme="dark"] #slide-curtain { animation: rgb-flow-bg 20s linear infinite; }
         #slide-curtain.active { transform: translateX(0%); }
 
-        /* --- Success Popup --- */
-        #success-popup {
-            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
-            background: rgba(46, 204, 113, 0.95); color: white;
-            padding: 15px 30px; border-radius: 50px; font-weight: 600;
-            z-index: 30000; backdrop-filter: blur(10px);
-            transition: top 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            pointer-events: none; white-space: nowrap;
-        }
-        #success-popup.show { top: 30px; }
-
-        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 5px; z-index: 10001; }
-        .progress-bar { height: 100%; background: var(--orange-deep); width: 0%; transition: width 0.1s; }
-
-        /* --- Navbar --- */
+        /* --- NAVBAR STYLING --- */
         nav {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
             width: 90%; max-width: 1200px; height: 70px;
             background: var(--glass); backdrop-filter: blur(20px);
             border-radius: 20px; display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px; z-index: 10000; border: 1px solid transparent;
-            box-sizing: border-box;
+            padding: 0 20px; z-index: 10000; box-sizing: border-box;
         }
-        nav::before {
+
+        /* LIGHT MODE NAVBAR: Orange Glowing Border */
+        [data-theme="light"] nav { border: 1px solid transparent; } /* Placeholder for layout */
+        [data-theme="light"] nav::before {
             content: ""; position: absolute; inset: -1px; border-radius: 20px; padding: 2px;
             background: linear-gradient(90deg, var(--border-glass) 0%, var(--orange-main) 50%, var(--border-glass) 100%);
             background-size: 200% 100%; animation: moveBorder 4s linear infinite;
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
         }
-        @keyframes moveBorder { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+
+        /* DARK MODE NAVBAR: RGB Animated Border */
+        [data-theme="dark"] nav { 
+            animation: rgb-flow-border 20s linear infinite; 
+            border-width: 1px; border-style: solid; 
+        }
+        [data-theme="dark"] nav::before { display: none; } /* Hide orange glow in dark mode */
 
         .nav-title { font-weight: 700; font-size: 1rem; cursor: pointer; white-space: nowrap; }
         .nav-right { display: flex; align-items: center; gap: 10px; }
+        
         .theme-switch { width: 44px; height: 22px; background: #ddd; border-radius: 50px; position: relative; cursor: pointer; }
-        [data-theme="dark"] .theme-switch { background: var(--orange-main); }
+        [data-theme="dark"] .theme-switch { background: transparent; border: 1px solid white; }
+        [data-theme="light"] .theme-switch { background: var(--orange-main); }
         .theme-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; background: white; border-radius: 50%; transition: 0.3s; }
         [data-theme="dark"] .theme-switch::after { left: 24px; }
+        
+        /* Contact Button Sync */
         .contact-btn { background: var(--orange-main); color: white; border: none; padding: 8px 15px; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 0.8rem; }
+        [data-theme="dark"] .contact-btn { animation: rgb-flow-bg 20s linear infinite; }
 
-        /* --- Mobile Hamburger --- */
+        /* --- MOBILE MENU --- */
         .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 10px; }
         .hamburger span { display: block; width: 25px; height: 3px; background: var(--text-main); border-radius: 2px; transition: 0.3s; }
-        
-        /* --- MOBILE SIDE DRAWER --- */
+
         .mobile-menu {
-            position: fixed; 
-            top: 0; right: -100%; /* Hidden */
-            width: 70%; max-width: 250px; height: 100vh;
+            position: fixed; top: 0; right: -100%; width: 70%; max-width: 250px; height: 100vh;
             background: var(--menu-bg); backdrop-filter: blur(30px);
-            z-index: 20000; 
-            visibility: hidden; opacity: 0;
-            padding: 40px 25px 20px 25px; /* Bottom padding for close btn */
-            display: flex; flex-direction: column; gap: 30px;
-            box-shadow: -5px 0 20px rgba(0,0,0,0.3); border-left: 1px solid var(--border-glass);
+            z-index: 20000; visibility: hidden; opacity: 0;
+            padding: 30px 25px; display: flex; flex-direction: column; gap: 30px;
+            box-shadow: -5px 0 30px rgba(0,0,0,0.5); 
             transition: all 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+            border-left: 1px solid var(--border-glass);
         }
+        [data-theme="dark"] .mobile-menu { animation: rgb-flow-border 20s linear infinite; border-left-width: 1px; border-left-style: solid; }
         .mobile-menu.active { right: 0; visibility: visible; opacity: 1; }
+
+        .menu-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 15px; }
+        [data-theme="dark"] .menu-header { border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .menu-header h2 { font-size: 1.5rem; margin: 0; font-weight: 700; }
+        
+        .close-icon-btn { background: transparent; border: none; color: var(--text-main); font-size: 1.8rem; cursor: pointer; line-height: 1; padding: 5px; }
         
         .mobile-item { display: flex; flex-direction: column; gap: 12px; }
-        .mobile-item label { font-size: 0.75rem; opacity: 0.6; letter-spacing: 2px; text-transform: uppercase; }
-        
         .mob-btn {
             background: transparent; border: 1px solid var(--border-glass); color: var(--text-main);
-            padding: 12px; border-radius: 10px; font-weight: 700; text-align: left; cursor: pointer;
-            transition: 0.3s; font-family: inherit; font-size: 0.9rem;
+            padding: 12px; border-radius: 10px; font-weight: 700; text-align: left; cursor: pointer; transition: 0.3s; font-family: inherit; font-size: 0.9rem;
         }
-        .mob-btn:hover { background: var(--orange-main); color: white; border-color: var(--orange-main); }
+        [data-theme="dark"] .mob-btn:hover { animation: rgb-flow-bg 20s linear infinite; color: white; border: none; }
+        [data-theme="light"] .mob-btn:hover { background: var(--orange-main); color: white; border-color: var(--orange-main); }
         
         .theme-options { display: flex; gap: 8px; }
         .theme-btn {
@@ -152,33 +185,24 @@
             color: var(--text-main); border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem;
         }
         .theme-btn.active { background: var(--orange-main); color: white; border-color: var(--orange-main); }
+        [data-theme="dark"] .theme-btn.active { animation: rgb-flow-bg 20s linear infinite; border: none; }
 
-        /* Close Button at Bottom */
-        .close-menu-btn {
-            margin-top: auto; /* Pushes button to bottom */
-            background: rgba(255, 0, 0, 0.05); border: 1px solid rgba(255, 0, 0, 0.2);
-            color: #ff4d4d; padding: 12px; border-radius: 10px;
-            font-weight: 700; cursor: pointer; transition: 0.3s; font-family: inherit; font-size: 0.9rem;
-        }
-        .close-menu-btn:hover { background: #ff4d4d; color: white; }
-
-        .menu-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 15000; 
-            display: none; opacity: 0; transition: opacity 0.3s ease;
-            backdrop-filter: blur(2px);
-        }
+        .menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 15000; display: none; opacity: 0; transition: opacity 0.3s ease; backdrop-filter: blur(2px); }
         .menu-overlay.active { display: block; opacity: 1; }
 
-        /* --- Container --- */
+        /* --- PROJECT CARDS --- */
         .container { max-width: 1100px; margin: 0 auto; padding: 140px 20px 50px; display: flex; flex-direction: column; gap: 60px; }
         
         .project-card { 
             display: flex; align-items: center; background: var(--glass); backdrop-filter: blur(25px); 
-            border: 1px solid var(--border-glass); border-radius: 35px; padding: 20px; gap: 30px;
+            border-radius: 35px; padding: 20px; gap: 30px;
             text-decoration: none; color: inherit; opacity: 0; transform: translateY(30px); 
             transition: transform 0.6s, opacity 0.6s; position: relative;
+            border: 1px solid transparent;
         }
+        [data-theme="light"] .project-card { border-color: var(--border-glass); }
+        [data-theme="dark"] .project-card { animation: rgb-flow-border 20s linear infinite; border-width: 1px; border-style: solid; }
+        
         .project-card.is-visible { opacity: 1; transform: translateY(0); }
 
         .content { flex: 1; padding: 20px; display: flex; flex-direction: column; justify-content: center; }
@@ -194,17 +218,26 @@
         .project-card:hover .img-holder { transform: scale(1.02); }
 
         .project-card:nth-child(even) { flex-direction: row-reverse; }
-        .project-card:hover { transform: translateY(-5px) !important; box-shadow: 0 20px 50px -10px rgba(0,0,0,0.3); border-color: var(--orange-main); }
+        .project-card:hover { transform: translateY(-5px) !important; box-shadow: 0 20px 50px -10px rgba(0,0,0,0.3); }
 
+        /* --- FOOTER SYNC --- */
         .footer-text { text-align: center; padding: 60px 20px 100px; }
+        .footer-text h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 10px; }
+        [data-theme="dark"] .footer-text h1 { animation: rgb-flow-text 20s linear infinite; }
         .ai-credit { position: relative; width: 100%; font-size: 0.6rem; opacity: 0.5; text-align: center; padding-bottom: 20px; }
 
+        /* Modal & Success */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 20000; }
         .modal-box { background: var(--glass); backdrop-filter: blur(30px); border: 1px solid var(--border-glass); padding: 30px; border-radius: 25px; width: 85%; max-width: 400px; text-align: center; }
+        #success-popup { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: rgba(46, 204, 113, 0.95); color: white; padding: 15px 30px; border-radius: 50px; font-weight: 600; z-index: 30000; transition: 0.5s; pointer-events: none; white-space: nowrap; }
+        #success-popup.show { top: 30px; }
+        
+        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 5px; z-index: 10001; }
+        .progress-bar { height: 100%; background: var(--orange-deep); width: 0%; transition: width 0.1s; }
+        [data-theme="dark"] .progress-bar { animation: rgb-flow-bg 20s linear infinite; }
 
         @media (max-width: 900px) {
-            .nav-right { display: none; } 
-            .hamburger { display: flex; } 
+            .nav-right { display: none; } .hamburger { display: flex; }
             .project-card, .project-card:nth-child(even) { flex-direction: column; padding: 20px; }
             .img-holder { width: 100%; height: 250px; margin-top: 15px; }
             .content { padding: 10px; text-align: center; }
@@ -221,13 +254,14 @@
     <div class="menu-overlay" onclick="closeMobileMenu()"></div>
 
     <div class="mobile-menu" id="mobileMenu">
-        <h2 style="font-size: 1.5rem; margin-bottom: 20px;">MENU</h2>
-        
+        <div class="menu-header">
+            <h2>MENU</h2>
+            <button class="close-icon-btn" onclick="closeMobileMenu()">✕</button>
+        </div>
         <div class="mobile-item">
             <label>General</label>
             <button class="mob-btn" onclick="openContactFromMobile()">CONTACT WITH US</button>
         </div>
-
         <div class="mobile-item">
             <label>Theme</label>
             <div class="theme-options">
@@ -235,15 +269,13 @@
                 <button class="theme-btn" onclick="setTheme('dark')">DARK</button>
             </div>
         </div>
-
-        <button class="close-menu-btn" onclick="closeMobileMenu()">CLOSE MENU</button>
     </div>
 
     <nav>
         <div class="nav-title" onclick="window.scrollTo(0,0)">UniDOCS GENERATOR | RUET</div>
         <div class="nav-right">
             <div class="theme-switch" onclick="toggleTheme()"></div>
-            <button class="contact-btn" onclick="document.getElementById('contactModal').style.display='flex'">CONTACT WITH US</button>
+            <button class="contact-btn" onclick="document.getElementById('contactModal').style.display='flex'">CONTACT</button>
         </div>
         <div class="hamburger" onclick="toggleMobileMenu()">
             <span></span><span></span><span></span>
@@ -301,7 +333,6 @@
     <div class="ai-credit">This website is developed through AI Assistance</div>
 
     <script>
-        // --- RESTORED NOISE GRID ANIMATION ---
         const canvas = document.getElementById('grid-canvas');
         const ctx = canvas.getContext('2d');
         let width, height, rows, cols;
@@ -324,9 +355,10 @@
                     const x = i * spacing; const y = j * spacing;
                     const dx = mouse.x - x; const dy = mouse.y - y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
-                    let offset = dist < 150 ? (150 - dist) / 150 * 15 : 0;
+                    let offset = 0, size = 1.5;
+                    if (dist < 150) { offset = (150 - dist) / 150 * 10; size = 2.5; }
                     ctx.beginPath();
-                    ctx.arc(x - (dx/dist)*offset || x, y - (dy/dist)*offset || y, dist < 150 ? 3 : 1.5, 0, Math.PI * 2);
+                    ctx.arc(x - (dx/dist)*offset || x, y - (dy/dist)*offset || y, size, 0, Math.PI * 2);
                     ctx.fill();
                 }
             }
@@ -336,7 +368,6 @@
         window.addEventListener('resize', initGrid);
         initGrid(); drawGrid();
 
-        // --- THEME & MENU LOGIC ---
         function toggleTheme() {
             const body = document.body;
             const newTheme = body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
@@ -352,7 +383,6 @@
             });
         }
 
-        // DEFAULT DARK MODE SETTING
         const savedTheme = localStorage.getItem('theme') || 'dark';
         setTheme(savedTheme);
 
@@ -400,9 +430,7 @@
                 e.preventDefault();
                 const targetUrl = this.href; 
                 document.getElementById('slide-curtain').classList.add('active');
-                setTimeout(() => {
-                    window.location.href = targetUrl;
-                }, 400);
+                setTimeout(() => { window.location.href = targetUrl; }, 400);
             });
         });
 
